@@ -1,0 +1,58 @@
+diff --git a/node_modules/viewerjs/dist/viewer.js b/node_modules/viewerjs/dist/viewer.js
+index e1381dc..63f5452 100644
+--- a/node_modules/viewerjs/dist/viewer.js
++++ b/node_modules/viewerjs/dist/viewer.js
+@@ -7,7 +7,6 @@
+  *
+  * Date: 2023-01-01T10:14:49.638Z
+  */
+-
+ (function (global, factory) {
+   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+   typeof define === 'function' && define.amd ? define(factory) :
+@@ -1258,7 +1257,7 @@
+         target = target.parentElement;
+         action = getData(target, DATA_ACTION);
+       }
+-
++      this.pointerEndTimeStamp = event.timeStamp;
+       // Cancel the emulated click when the native click event was triggered.
+       if (IS_TOUCH_DEVICE && event.isTrusted && target === this.canvas) {
+         clearTimeout(this.clickCanvasTimeout);
+@@ -1280,6 +1279,8 @@
+         case 'hide':
+           if (!this.pointerMoved) {
+             this.hide();
++          }else if (this.pointerEndTimeStamp>0 && this.pointerEndTimeStamp-this.pointerStartTimeStamp<200) {
++            this.hide();
+           }
+           break;
+         case 'view':
+@@ -1502,8 +1503,9 @@
+       var buttons = event.buttons,
+         button = event.button;
+       this.pointerMoved = false;
++      this.pointerStartTimeStamp = event.timeStamp;
++      this.pointerEndTimeStamp= 0;
+       if (!this.viewed || this.showing || this.viewing || this.hiding
+-
+       // Handle mouse event and pointer event and ignore touch event
+       || (event.type === 'mousedown' || event.type === 'pointerdown' && event.pointerType === 'mouse') && (
+       // No primary button (Usually the left button)
+@@ -1542,6 +1544,7 @@
+       }
+       event.preventDefault();
+       this.pointerMoved = true;
++      this.pointerEndTimeStamp = event.timeStamp;
+       if (event.changedTouches) {
+         forEach(event.changedTouches, function (touch) {
+           assign(pointers[touch.identifier] || {}, getPointer(touch, true));
+@@ -2967,6 +2970,8 @@
+       this.wheeling = false;
+       this.zooming = false;
+       this.pointerMoved = false;
++      this.pointerStartTimeStamp=0;
++      this.pointerEndTimeStamp=0;
+       this.id = getUniqueID();
+       this.init();
+     }

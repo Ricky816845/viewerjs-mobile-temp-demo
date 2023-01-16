@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6"
+  },
+  "vueCompilerOptions": {
+    "target": 2.7,
+    "extensions": [".vue"]
+  },
+  "exclude": ["node_modules"],
+  "extensions": [".vue"]
+}
